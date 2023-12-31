@@ -1,0 +1,27 @@
+[
+    {
+        "name": "开源操作系统训练营",
+        "url": "https://github.com/LearningOS",
+        "desc": "学习项目 | 清华大学组织的开源操作系统训练营"
+    },
+    {
+        "name": "MIT6.8540(原6.824)",
+        "url": "https://pdos.csail.mit.edu/6.824/schedule.html",
+        "desc": "学习项目 | 分布式系统课程"
+    },
+    {
+        "name": "CMU15445",
+        "url": "https://15445.courses.cs.cmu.edu/fall2022/schedule.html",
+        "desc": "学习项目 | 数关系型据库课程"
+    },
+    {
+        "name": "MIT6.S081",
+        "url": "https://15445.courses.cs.cmu.edu/fall2022/schedule.html",
+        "desc": "学习项目 | 操作系统课程"
+    },
+    {
+        "name": "2023字节跳动青训后端项目",
+        "url": "https://github.com/ToniXWD/miniDouyin.git",
+        "desc": "个人项目 | Hertz + Gorm + Postgresql"
+    }
+]

@@ -1,9 +1,18 @@
 ---
-title: chapter3练习
-date: 2023-12-19 22:54:06
-category: '清华大学开源操作系统训练营2023'
-tags:
+title: '2023开源操作系统训练营二阶段:rCore chapter3练习'
+date: 2023-12-11 22:54:06
+category: 
+- '训练营笔记'
+- '清华大学开源操作系统训练营2023'
+tags: 
+- 'OS'
+- '操作系统'
+- 'Rust'
+- 'riscv'
 ---
+
+**练习实验书**: https://learningos.cn/rCore-Tutorial-Guide-2023A/chapter3/5exercise.html
+
 # 1 实现的功能描述
 1. 在`task.rs`中的`TaskControlBlock`结构体增加了`sys_call_times`数组, 用于记录当前`task`中各个系统调用的次数
 2. 每次执行系统调用时, 将全局变量`TASK_MANAGER`中当前任务`current_task`对应的`TaskControlBlock`结构体的系统调用记录自增

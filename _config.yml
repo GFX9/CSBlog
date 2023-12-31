@@ -103,4 +103,4 @@ theme: cactus
 deploy:
   type: git
   repo: git@github.com:ToniXWD/ToniXWD.github.io.git
-
+  branch: gh-pages
