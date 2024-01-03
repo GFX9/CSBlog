@@ -18,7 +18,7 @@ tags:
 `MapReduce`是一种编程模型, 用于处理和大数据。其思想是使程序员能通过简单的`Map`函数和`Reduce`函数的编写就能完成分布式计算的任务, 而不需要知道任何有关分布式的事情，`MapReduce`框架会处理剩下的事情。
 
 # 2 MapReduce结构
-![Alt text](../../images/Lec02笔记_MapReduce_Fig.png)
+![Alt text](../../images/Lec02_MapReduce_Fig.png)
 
 上图所示是论文中对`MapReduce`架构描述, `MapReduce`中有如下术语:
 - `Worker`: 分布式系统中不同计算机上运行的进程
@@ -58,6 +58,6 @@ tags:
 # 4 一个wc执行流程的案例
 此处给出一个统计单词出现数量任务执行流程的案例, 助于理解
 
-![img](../../images/MapReduce流程.png)
+![img](../../images/MapReduce_process.png)
 
 > 假设单词`a`的哈希值为0, `b`的哈希值为1
