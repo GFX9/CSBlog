@@ -1,6 +1,6 @@
 ---
 title: "MIT6.8540(6.824) Lab2: Raft 2A"
-date: 2023-12-26 15:29:17
+date: 2024-01-01 15:29:17
 category: 
 - 'CS课程笔记'
 - 'MIT6.5840(6.824) 2023'
@@ -12,11 +12,11 @@ tags:
 
 Lab2的内容是实现`Raft`算法, `Raft`算法是一种分布式系统中的一致性的共识算法, 于2014年提出。本次实现的`Raft`是下一个`K/V`实验的基础, 因此十分重要。就个人体验而言，本次实验的难度比之前的`MapReduce`复杂不少, 因此强烈建议先大致浏览一遍`Raft`的[原论文](https://pdos.csail.mit.edu/6.824/papers/raft-extended.pdf)
 
-由于这个`Lab`难度较大, 内容较多, 我将安装文档的任务分块进行, 这一部分先介绍第一个任务: `2A: leader election`
+由于这个`Lab`难度较大, 内容较多, 我将按照文档的任务分块进行, 这一部分先介绍第一个任务: `2A: leader election`
 
 `Lab文档`见: https://pdos.csail.mit.edu/6.824/labs/lab-raft.html
 
-代码: 还没写完, 稍后更新
+我的代码: https://github.com/ToniXWD/MIT6.8540/tree/lab2A
 
 # 1 任务描述
 首先贴一张原论文的图, 这张图描述了每个`RPC的逻辑, 非常重要`:
@@ -189,12 +189,11 @@ func (rf *Raft) Elect() {
 	}
 	rf.mu.Unlock()
 
-	for server := range rf.peers {
-		if server == rf.me {
-			DPrintf("vote for self : Raft[%d]", rf.me)
+	for i := 0; i < len(rf.peers); i++ {
+		if i == rf.me {
 			continue
 		}
-		go rf.collectVote(server, args)
+		go rf.collectVote(i, args)
 	}
 }
 ```
@@ -352,7 +351,7 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 当一个`Leader`诞生时, 立即启动心跳发射器, 其不断地调用`AppendEntries RPC`, 只是`Entries`是空的而已, 其代码相对简单:
 ```go
 func (rf *Raft) SendHeartBeats() {
-	DPrintf("server %v start sending heartbeats\n", rf.me)
+	DPrintf("server %v 开始发送心跳\n", rf.me)
 
 	for !rf.killed() {
 		rf.mu.Lock()
@@ -372,7 +371,10 @@ func (rf *Raft) SendHeartBeats() {
 		}
 		rf.mu.Unlock()
 
-		for i := 0; i < len(rf.peers) && i != rf.me; i++ {
+		for i := 0; i < len(rf.peers); i++ {
+            if i == rf.me {
+				continue
+			}
 			go rf.handleHeartBeat(i, args)
 		}
 
@@ -542,3 +544,7 @@ echo "Failures: $fail_count"
 结果:
 
 ![lab2-2A-test2](../../images/lab2-2A-test2.png)
+
+
+# 更新
+代码在`leader`选举过程中存在`bug`, 但任然能通过测例, 修复后的代码和`bug`分析见 下一篇文章: [Lab2_Raft_2B.md](/2024/01/06/MIT6.8540/Lab2_Raft_2B/)
