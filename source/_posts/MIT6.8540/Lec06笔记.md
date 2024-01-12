@@ -1,5 +1,5 @@
 ---
-title: 'MIT6.8540(6.824) Lec05笔记: raft论文解读1：选举和日志'
+title: 'MIT6.8540(6.824) Lec06笔记: raft论文解读1：选举和日志'
 date: 2024-01-11 09:33:25
 category: 
 - 'CS课程笔记'
@@ -7,8 +7,9 @@ category:
 - 课程笔记
 tags:
 - '分布式系统'
-- 'VMWare FT'
+- 'Raft'
 ---
+课程主页: https://pdos.csail.mit.edu/6.824/schedule.html
 
 本节课是介绍`Raft`共识算法的第一部分, 建议阅读[论文](https://pdos.csail.mit.edu/6.824/papers/gfs.pdf), 如果要做`Lab`的话, 论文是一定要看的, 尤其是要吃透论文中的图2。
 
@@ -120,6 +121,5 @@ tags:
 以上情形将导致客户端请求永远不被执行, 教授提出的解决方案是:**通过一个双向的心跳解决**: 
 1. `Follower`需要回复心跳
 2. 如果`Leader`一段时间没有收到自己发出心跳的回复，将让出`Leader`
-
 
 

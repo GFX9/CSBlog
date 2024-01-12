@@ -9,6 +9,7 @@ tags:
 - '分布式系统'
 - 'VMWare FT'
 ---
+课程主页: https://pdos.csail.mit.edu/6.824/schedule.html
 
 # 1 整体介绍
 论文介绍了一种在虚拟机上实现的备份系统的设计: **VMWare Fault-tolerant**, 使用了较小的带宽, 支持在远距离实现容错。该实现是基于**状态机**的。

@@ -41,7 +41,7 @@ if rf.votedFor == -1 || rf.votedFor == args.CandidateId {
 3. 如果`term`相同, 则只有请求者的`log`至少和自己一样长, 并且`LastLogTerm `也至少和自己的最后一个`log`的`term`一样新, 才投票
 
 这样的实现会导致以下的情况:
-1. 某一时刻一个`server`网络出现了问题(称其为`S`), 其自增currentTerm后发出选举， 经过多次选举超时后其`currentTerm`已经远大于离开集群时的`currentTerm`
+1. 某一时刻一个`server`网络出现了问题(称其为`S`), 其自增`currentTerm`后发出选举， 经过多次选举超时后其`currentTerm`已经远大于离开集群时的`currentTerm`
 2. 后来网络恢复了正常, 这时其他的服务器收到了`S`的选举请求, 这个选举请求有更新的term, 因此都同意向它投票, `S`成为了最新的`leader`
 3. 由于`S`离开集群时集群其他的服务器已经提交了多个`log`, 这些提交在`S`中不存在, 而`S`信任自己的`log`, 并将自己的`log`复制到所有的`follower`上, 这将覆盖已经提交了多个`log`, 导致了错误
 

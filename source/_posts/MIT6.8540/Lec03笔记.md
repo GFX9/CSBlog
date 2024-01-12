@@ -9,6 +9,7 @@ tags:
 - '分布式系统'
 - 'GFS'
 ---
+课程主页: https://pdos.csail.mit.edu/6.824/schedule.html
 
 本节课是解释谷歌的分布式文件系统`GFS`, 强烈建议阅读其[论文](https://pdos.csail.mit.edu/6.824/papers/gfs.pdf)
 

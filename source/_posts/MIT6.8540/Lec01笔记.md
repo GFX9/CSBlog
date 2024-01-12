@@ -10,7 +10,7 @@ tags:
 - 'Go'
 - 'MapReduce'
 ---
-
+课程主页: https://pdos.csail.mit.edu/6.824/schedule.html
 
 本次课程包括了分布式系统的引入内容和`MapReduce`, 前者是引入性质的内容就不过多介绍了, 这里介绍`MapReduce`
 
