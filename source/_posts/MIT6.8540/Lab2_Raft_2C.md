@@ -1,6 +1,6 @@
 ---
 title: 'MIT6.8540(6.824) Lab2: Raft 2C'
-date: 2024-01-06 17:17:01
+date: 2024-01-13 17:15:38
 category: 
 - 'CS课程笔记'
 - 'MIT6.5840(6.824) 2023'
@@ -44,7 +44,7 @@ if len(args.Entries) != 0 && len(rf.log) > args.PrevLogIndex+1 {
 ```
 
 # 2 优化: 快速回退
-在之前的回退实现中, 如果有`Follower`的日志不匹配, 每次`RPC`中, `Leader`会将其`nextIndex`自减1来重试, 但其在某些情况下会导致效率很低, 因此需要`AppendEntries RPC`的回复信息携带更多的字段以加速回退, 核心思想就是: :**`Follower`返回更多信息给`Leader`，使其可以以`Term`为单位来回退**
+在之前的回退实现中, 如果有`Follower`的日志不匹配, 每次`RPC`中, `Leader`会将其`nextIndex`自减1来重试, 但其在某些情况下会导致效率很低, 因此需要`AppendEntries RPC`的回复信息携带更多的字段以加速回退, 核心思想就是:**`Follower`返回更多信息给`Leader`，使其可以以`Term`为单位来回退**
 
 教授在课堂上已经介绍了快速回退的实现机制, 可以看我整理的[笔记](/2024/01/12/MIT6.8540/Lec07笔记/) 
 
