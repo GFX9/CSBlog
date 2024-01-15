@@ -1,5 +1,5 @@
 ---
-title: "MIT6.8540(6.824) Lec02笔记: Go: 同步原语、通道、Context和RPC)"
+title: "MIT6.5840(6.824) Lec02笔记: Go: 同步原语、通道、Context和RPC)"
 date: 2023-12-25 17:01:51
 category: 
 - 'CS课程笔记'

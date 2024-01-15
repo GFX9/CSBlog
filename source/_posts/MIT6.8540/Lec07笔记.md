@@ -1,5 +1,5 @@
 ---
-title: 'MIT6.8540(6.824) Lec07笔记: raft论文解读2'
+title: 'MIT6.5840(6.824) Lec07笔记: raft论文解读2'
 date: 2024-01-12 09:19:15
 category: 
 - 'CS课程笔记'

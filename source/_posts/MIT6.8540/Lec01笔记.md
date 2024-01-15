@@ -1,5 +1,5 @@
 ---
-title: "MIT6.8540(6.824) Lec01笔记: MapReduce论文解读"
+title: "MIT6.5840(6.824) Lec01笔记: MapReduce论文解读"
 date: 2023-12-24 17:34:02
 category: 
 - 'CS课程笔记'

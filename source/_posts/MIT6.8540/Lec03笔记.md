@@ -1,5 +1,5 @@
 ---
-title: "MIT6.8540(6.824) Lec03笔记: GFS"
+title: "MIT6.5840(6.824) Lec03笔记: GFS"
 date: 2023-12-30 17:11:45
 category: 
 - 'CS课程笔记'

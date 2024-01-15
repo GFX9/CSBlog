@@ -1,5 +1,5 @@
 ---
-title: 'MIT6.8540(6.824) Lec04笔记: vm-ft论文解读'
+title: 'MIT6.5840(6.824) Lec04笔记: vm-ft论文解读'
 date: 2024-01-07 16:47:33
 category: 
 - 'CS课程笔记'
