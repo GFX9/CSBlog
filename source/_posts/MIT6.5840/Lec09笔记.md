@@ -30,7 +30,7 @@ class KVStore:
 
 在非并发的单机单线程环境下, 以上要求是自然被满足的, 但我们需要考虑的是如下一个分布式场景:
 
-![Lec09-KV-case1](Lec09-KV-case1.png)
+![Lec09-KV-case1]../../images/(Lec09-KV-case1.png)
 
 上图的每一个操作的全过程用一个矩形条来表示, 左边表示操作开始, 右边表示操作结束。在上图的场景下， 很难确定`Get("x")`返回值究竟是多少, 因为并发场景下, 我们不知道两个`Put`操作真正被执行时`Get`操作到哪一步了。为了定义在上述场景下的操作正确性，引入了**线性一致性**的概念
 
@@ -40,15 +40,15 @@ class KVStore:
 ## 2.3 案例
 考虑下面的这个场景：
 
-![Lec09-KV-case2](Lec09-KV-case2.png)
+![Lec09-KV-case2](../../images/Lec09-KV-case2.png)
 
 该场景是可线性化的，其结果如下：
 
-![Lec09-KV-case3](Lec09-KV-case3.png)
+![Lec09-KV-case3](../../images/Lec09-KV-case3.png)
 
 但下面这个场景就是不可线性化的:
 
-![Lec09-KV-case4](Lec09-KV-case4.png)
+![Lec09-KV-case4](../../images/Lec09-KV-case4.png)
 
 原因在于, 既然`Client 3`得到了1这个结果, 那么`Client 2`的`Put`操作一定在`Client 3`的`Get`操作结束前完成了, 那么`Client 4`的`Get`操作就不应该得到旧值0
 
