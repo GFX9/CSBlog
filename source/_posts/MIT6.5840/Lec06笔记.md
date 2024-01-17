@@ -1,5 +1,5 @@
 ---
-title: 'MIT6.5840(6.824) Lec07笔记: raft论文解读2'
+title: 'MIT6.5840(6.824) Lec06笔记: raft论文解读2: 恢复、持久化和快照'
 date: 2024-01-12 09:19:15
 category: 
 - 'CS课程笔记'
@@ -258,7 +258,4 @@ args := &AppendEntriesArgs{
   2. 回退到在某个点时，`Leader`不能再回退，因为它已经到了自己`Log`的起点, 更早的`Log`已经由于快照而被丢弃
   3. `Leader`将自己的快照发给`Follower`
   4. `Leader`稍后通过`AppendEntries`发送快照后的`Log`
-
-# 6 线性一致性
-这里讨论的是如何定义操作的正确性。由于并没有讲完, 就先不总结了, 相关的内容挪到`Lec08`的笔记中
 
