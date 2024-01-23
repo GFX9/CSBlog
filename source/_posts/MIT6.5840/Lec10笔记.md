@@ -7,7 +7,7 @@ category:
 - 课程笔记
 tags:
 - '分布式系统'
-- '线性一致性'
+- 'ZooKeeper'
 ---
 
 本次课程介绍了`ZooKeeper`, 并且我结合教授的课程和原论文总结了`ZooKeeper`的关键知识点形成了本文
