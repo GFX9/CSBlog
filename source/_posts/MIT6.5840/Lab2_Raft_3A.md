@@ -489,6 +489,6 @@ func (kv *KVServer) DBExecute(op *Op, isLeader bool) (res result) {
 go test -v -run 3A
 ```
 结果如下:
-![Alt text](../../images/lab3-3C-test.png)
+![Alt text](../../images/lab3-3A-test.png)
 
 该代码经过150次测试没有报错
