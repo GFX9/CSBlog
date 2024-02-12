@@ -1,7 +1,9 @@
 ---
 title: SQL进阶-1
 date: 2023-12-27 22:33:41
-category: '数据库'
+category: 
+- '数据库'
+- 'sql学习'
 tags:
 - '数据库'
 - 'SQL'
