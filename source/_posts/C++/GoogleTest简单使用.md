@@ -22,18 +22,52 @@ tags:
 
 ## 2.2 测试用例和测试套件
 
-- **测试用例（Test Case）**：是指一组相关测试的集合。在`Google Test`中，使用 `TEST()` 宏来定义一个测试用例。
-- **测试套件（Test Suite）**：在更早的`Google Test`版本中，测试套件是指具有相同前缀的一组测试用例的集合。在新版本中，使用 `TEST_F()` 宏来定义测试套件，并且需要定义一个测试夹具（Fixture）类。
+### 2.2.1 测试用例
+**测试用例（Test Case）**：是指一组相关测试的集合。在`Google Test`中，使用 `TEST()` 宏来定义一个不需要额外的设置或清理过程的简单测试用例。使用 `TEST` 时，只需提供测试案例名称和测试名称，然后编写测试代码块。案例如下:
+```cpp
+TEST(RbTreeTest, InsertTEST) {
+  // 测试代码在这里
+  EXPECT_EQ(1, 1); // 一个示例断言
+}
+```
+其中`TEST`宏后的2个参数唯一标记了一个测试用例, 第一个参数可以重复, 但2个参数不能同时重复。
+使用 `TEST`，每个测试是独立的，测试之间不共享任何状态。这个宏适合于无状态的测试，或者不需要为多个测试维护一个共同的环境时。
 
-## 2.3 测试夹具（Fixture）
+### 2.2.2 测试套件
+**测试套件（Test Suite）**：在更早的`Google Test`版本中，测试套件是指具有相同前缀的一组测试用例的集合。在新版本中，使用 `TEST_F()` 宏来定义测试套件，并且需要定义一个测试固件（`Fixture`）类。
 
-测试夹具允许你为多个测试定义共享的环境或状态。你可以使用 `TEST_F()` 宏定义在同一测试夹具下的测试，所有这些测试都会共享相同的设置和清理代码。
+`TEST_F` 宏在有一个测试固件时使用，测试固件是一种用来重用相同的设置和清理代码为多个测试服务的方法。测试固件通过一个从 `::testing::Test` 派生的类来定义。然后，可以重写 `SetUp` 和 `TearDown` 方法来初始化和清理测试环境。
+
+下面是一个使用 `TEST_F` 的例子：
+
+```cpp
+// 定义测试固件
+class MyTestFixture : public ::testing::Test {
+protected:
+  void SetUp() override {
+    // 设置测试环境的代码
+  }
+
+  void TearDown() override {
+    // 清理测试环境的代码
+  }
+};
+
+// 使用 TEST_F 编写使用测试固件的测试
+TEST_F(MyTestFixture, 测试名称) {
+  // 可以使用设置好的环境的测试代码
+  EXPECT_EQ(1, 1); // 一个示例断言
+}
+```
+
+使用 `TEST_F`，同一个固件内的每个测试按照它们定义的顺序运行，但`Google Test`确保每个测试是隔离的；也就是说，在每个测试之前，环境都会重置为通过 `SetUp` 建立的初始状态。这样，一个测试所做的改变不会影响到另一个测试。
 
 
 # 3 案例: `CMake`下使用`gtest`
 这个案例中, 我用自己之前学习过程中用`C++`手写常见数据结构的项目来介绍`CMake`中`gtest`的使用, 仓库在: https://github.com/ToniXWD/cppDataStructure
 
-## 3.1 官方指导的`CMake`编写
+## 3.1 简单测试用例
+### 3.1.1 官方指导的`CMake`编写
 在`CMake`中使用`gtest`不需要自行下载源码, 只需在`CMakeLists.txt`中如下编写:
 ```CMake
 cmake_minimum_required(VERSION 3.14)
@@ -158,7 +192,7 @@ Test project /home/xwd/cppDataStructure/build
 Total Test time (real) =   0.03 sec
 ```
 
-## 3.2 自动通过`CMake`注册单元测试
+### 3.1.2 自动通过`CMake`注册单元测试
 之前的内容可以看出, 每个单元测试都要单独地在`CMakeLists.txt`中指定链接库等, 很繁琐, 实际上我们可以借助`CMake`的语法自动注册单元测试:
 首先假设所有的单元测试都在`test`文件夹下, 且形如`*_test.cpp`, 因此可以在`test`文件夹下编写`CMake`模块:
 ```CMake
@@ -235,3 +269,97 @@ add_subdirectory(tests)
 ```
 
 之后自己新建的单元测试就可以被自动发现了
+
+## 3.2 测试套件
+如果有这样一种情况, 多个测试用例中, 代码初始化部分逻辑是相同的, 可以将其设置为测试套件, 下面是一个测试堆(`Heap`)数据结构的单元测试:
+```cpp
+#include "../include/heap.hpp"
+#include <gtest/gtest.h>
+#include <iostream>
+
+// 定义测试固件
+class InitHeap : public ::testing::Test {
+protected:
+  Heap<int> minHeap;
+  void SetUp() override {
+    // 设置测试环境的代码
+  }
+
+  void TearDown() override {
+    // 清理测试环境的代码
+  }
+};
+
+// Test case for inserting elements into the heap
+TEST_F(InitHeap, InsertAndSize) {
+  minHeap.insert(5);
+  minHeap.insert(2);
+  minHeap.insert(8);
+
+  EXPECT_EQ(minHeap.size(), 3);
+}
+
+// Test case for removing the root element
+TEST_F(InitHeap, RemoveRoot) {
+  minHeap.insert(5);
+  minHeap.insert(2);
+  minHeap.insert(8);
+
+  EXPECT_EQ(minHeap.removeRoot(), 2); // Assuming a min heap
+  EXPECT_EQ(minHeap.size(), 2);
+}
+
+// Test case to check heap property is maintained after insertions
+TEST_F(InitHeap, HeapPropertyAfterInsertion) {
+  minHeap.insert(5);
+  minHeap.insert(2);
+  minHeap.insert(8);
+  minHeap.insert(1);
+  minHeap.insert(3);
+
+  EXPECT_EQ(minHeap.removeRoot(), 1);
+  EXPECT_EQ(minHeap.removeRoot(), 2);
+  EXPECT_EQ(minHeap.removeRoot(), 3);
+  EXPECT_EQ(minHeap.removeRoot(), 5);
+  EXPECT_EQ(minHeap.removeRoot(), 8);
+}
+
+// Test case for handling removal from an empty heap
+TEST_F(InitHeap, RemoveFromEmptyHeap) {
+  EXPECT_THROW(minHeap.removeRoot(), std::out_of_range);
+}
+
+// Test case for dynamic resizing of the heap
+TEST_F(InitHeap, ResizeHeap) {
+  size_t initialCapacity = 32; // Assuming initial capacity is 32
+  for (int i = 0; i < initialCapacity + 1; ++i) {
+    minHeap.insert(i);
+  }
+
+  EXPECT_GT(minHeap.size(), initialCapacity);
+  for (int i = 0; i <= static_cast<int>(initialCapacity); ++i) {
+    EXPECT_EQ(minHeap.removeRoot(), i); // Assuming a min heap
+  }
+}
+
+// Test case for max heap property
+TEST(HeapTest, MaxHeapProperty) {
+  Heap<int, std::greater<int>> maxHeap;
+  maxHeap.insert(5);
+  maxHeap.insert(2);
+  maxHeap.insert(8);
+  maxHeap.insert(1);
+  maxHeap.insert(3);
+  maxHeap.insert(26);
+  maxHeap.insert(-5);
+
+  EXPECT_EQ(maxHeap.removeRoot(), 26);
+  EXPECT_EQ(maxHeap.removeRoot(), 8);
+  EXPECT_EQ(maxHeap.removeRoot(), 5);
+  EXPECT_EQ(maxHeap.removeRoot(), 3);
+  EXPECT_EQ(maxHeap.removeRoot(), 2);
+  EXPECT_EQ(maxHeap.removeRoot(), 1);
+  EXPECT_EQ(maxHeap.removeRoot(), -5);
+}
+```
+除了最后一个测试用例外, 每个测试都是初始化一个泛型为`int`的小根堆, 因此可以定义一个继承自`testing::Test`的类`InitHeap`, 并添加一个成员变量`minHeap`, 此后在使用`TEST_F`宏的测试案中将第一个参数设置为`InitHeap`, 然后就可以不用初始化小根堆了。如果有别的需求， 还可以重写`TearDown`和`SetUp`成员方法
