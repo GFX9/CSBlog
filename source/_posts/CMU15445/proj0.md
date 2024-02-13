@@ -1,5 +1,5 @@
 ---
-title: 'CMU15445 project0: 2022 C++ Primer'
+title: 'CMU15445 2022 project0: C++ Primer'
 date: 2024-02-06 17:37:18
 category: 
 - 'CS课程笔记'

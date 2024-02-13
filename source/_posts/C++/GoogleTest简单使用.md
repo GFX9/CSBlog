@@ -1,5 +1,5 @@
 ---
-title: GoogleTest简单使用
+title: 'Google Test 简单使用'
 date: 2024-02-10 10:38:15
 category: 
 - 'C++随笔'
