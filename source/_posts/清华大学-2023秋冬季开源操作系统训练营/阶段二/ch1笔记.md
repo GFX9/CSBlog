@@ -19,7 +19,7 @@ tags:
 
 完整版官方文档： https://rcore-os.cn/rCore-Tutorial-Book-v3/chapter1/1app-ee-platform.html
 
-训练营精简版文档： https://learningos.cn/rCore-Tutorial-Guide-2023A/chapter1/index.html
+精简版文档： https://learningos.cn/rCore-Tutorial-Guide-2023A/chapter1/index.html
 
 
 # 1 理论知识梳理
