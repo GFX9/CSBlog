@@ -1,5 +1,5 @@
 ---
-title: 2023开源操作系统训练营二阶段:rCore chapter1笔记
+title: '清华大学开源操作系统训练营: rCore chapter1笔记'
 date: 2024-02-05 15:06:13
 category: 
 - '训练营笔记'
