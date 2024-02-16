@@ -1,5 +1,5 @@
 ---
-title: 'CMU15445 2022 project1: 缓存池'
+title: 'CMU15445 2022 project1: 缓存池(可扩展哈希+LRU-K)'
 date: 2024-02-12 14:51:11
 category: 
 - 'CS课程笔记'
@@ -144,3 +144,83 @@ comment: on
    2. 更新对应`map_count`计数为0, 表示没有在缓存池中
 
 >> 以上的新增和替换思路没有考虑到页面在逻辑上是否可以移除, 因为一个页面尽管长时间没有被访问, 但其数据和加载到内存时发生了变化, 还没有刷入磁盘, 因此不能被移除。在项目代码中， 还需要增加相应的判断，不过这个判断很简单，就没有写到上面的流程里了
+
+# 4 Buffer Pool
+之前我们只是一股脑地实现了可扩展哈希和`LRU-K`, 但实际上却不知道或者不完全知道这些东西和最后实现的缓存池有什么联系, 做完这一小节后这一切都有了答案
+
+## 4.1 Buffer Pool 数据结构
+首先需要说明`Buffer Pool`的数据结构:
+```cpp
+/** Number of pages in the buffer pool. */
+const size_t pool_size_;
+/** The next page id to be allocated  */
+std::atomic<page_id_t> next_page_id_ = 0;
+/** Bucket size for the extendible hash table */
+const size_t bucket_size_ = 4;
+
+/** Array of buffer pool pages. */
+Page *pages_;
+/** Pointer to the disk manager. */
+DiskManager *disk_manager_ __attribute__((__unused__));
+/** Pointer to the log manager. Please ignore this for P1. */
+LogManager *log_manager_ __attribute__((__unused__));
+/** Page table for keeping track of buffer pool pages. */
+ExtendibleHashTable<page_id_t, frame_id_t> *page_table_;
+/** Replacer to find unpinned pages for replacement. */
+LRUKReplacer *replacer_;
+/** List of free frames that don't have any pages on them. */
+std::list<frame_id_t> free_list_;
+/** This latch protects shared data structures. We recommend updating this comment to describe what it protects. */
+std::mutex latch_;
+```
+上面这些都是`src/include/buffer/buffer_pool_manager_instance.h`中定义的类成员变量, 对其中主要的成员变量说明如下:
+1. `pool_size_`: 缓存池的容量, 也是之前的`LRU-K`中的`num_frames`
+2. `bucket_size_`: 之前的可扩展哈希的桶的容量
+3. `pages_`: 实际缓存池的页的内容, 是一个数组
+4. `disk_manager_`: 官方已经实现的从硬盘加载页面的类的实例, 相关函数的作用可以去看头文件
+5. `page_table_`: 之前实现的可扩展哈希表, 用于快速查找指定的`page_id_t`在`pages_`数组中的位置
+6. `replacer_`: 之前实现的替换类, 用于记录读写记录并在缓存池满时进行替换
+7. `free_list_`: 空闲链表, 记录的是空闲的页的索引, 也就是在 `pages_`数组中的下标
+
+通过上面的分析, 我们对之前实现的可扩展哈希表和`LRU-K`的作用就已经很明白了, 而且在实现了可扩展哈希表和`LRU-K`后, 最后这一部分的任务已经很简单了, 简单阅读一下`proj`文档, 应该就能试着写出来了
+
+## 4.2 实现思路
+### 4.2.1 `NewPgImp`
+要求在缓存池中创建一个新页, 逻辑如下:
+1. 如果`pages_`中的所有页都不能被替换(`GetPinCount() > 0`), 返回空指针
+2. 此时创建新页, 如下获取一个新页
+   1. 如果空闲列表`free_list_`不为空, 从中取一个页
+   2. 否则用替换类`replacer_`驱逐一个页
+      1. 如果驱逐页是脏页, 还需要用`disk_manager_`写回磁盘
+      2. 缓存池哈希表`page_table_`移除驱逐页
+3. 在缓存池哈希表`page_table_`记录新页位置
+4. 更新页的`pin_count_`和页号
+5. 用替换类`replacer_`更新新页的访问记录, 并设置其不可驱逐(马上要被使用)
+
+### 4.2.2 `FetchPgImp`
+要求从缓存池取出指定页号的页面, 如果页面不存在于缓存池但缓存池没有可以驱逐的页面, 返回空指针, 逻辑如下:
+1. 如果哈希表中存在映射, 说明页存在:
+   1. 自增其`pin_count_`
+   2. 用替换类`replacer_`更新页的访问记录, 并设置其不可驱逐(马上要被使用)
+   3. 返回
+2. 不存在映射, 需要驱逐
+   1. 如果`pages_`中的所有页都不能被替换(`GetPinCount() > 0`), 返回空指针
+   2. 分配新页
+      1. 如果空闲列表`free_list_`不为空, 从中取一个页
+      2. 否则用替换类`replacer_`驱逐一个页
+         1. 如果驱逐页是脏页, 还需要用`disk_manager_`写回磁盘
+         2. 缓存池哈希表`page_table_`移除驱逐页
+3. 更新新页的`pin_count_`和页号
+4. 用替换类`replacer_`更新新页的访问记录, 并设置其不可驱逐(马上要被使用)
+5. 调用`disk_manager_`的相关方法从硬盘上读取指定页的内容到这个新页
+
+### 4.2.3 `DeletePgImp`
+要求在缓存池删除指定页号的页, 逻辑如下:
+1. 如果该页不存在于缓存池, 返回`true`表示删除成功
+2. 如果该页被占用(`GetPinCount() > 0`), 返回`false`表示删除失败
+3. 删除该页
+   1. 从哈希表从移除
+   2. 从替换类`replacer_`中移除
+   3. 更新删除页的页号为`INVALID_PAGE_ID`, 更新`pin_count_ = 0`, 标记`is_dirty_ = false`
+   4. 将该页的索引号放回空闲列表
+   5. 返回`true`表示删除成功
