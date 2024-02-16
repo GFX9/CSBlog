@@ -13,11 +13,59 @@ tags:
 
 **练习实验书**: https://learningos.cn/rCore-Tutorial-Guide-2023A/chapter3/5exercise.html
 
-# 1 实现的功能描述
-1. 在`task.rs`中的`TaskControlBlock`结构体增加了`sys_call_times`数组, 用于记录当前`task`中各个系统调用的次数
+**我的代码**: https://github.com/ToniXWD/2023a-rcore-ToniXWD/tree/ch3
+
+# 1 编程作业
+>> ch3 中，我们的系统已经能够支持多个任务分时轮流运行，我们希望引入一个新的系统调用 sys_task_info 以获取当前任务的信息...
+
+1. 在`task.rs`中的`TaskControlBlock`结构体增加`sys_call_times`数组, 用于记录当前`task`中各个系统调用的次数
+   ```rust
+   /// The task control block (TCB) of a task.
+    #[derive(Copy, Clone)]
+    pub struct TaskControlBlock {
+        /// The task status in it's lifecycle
+        pub task_status: TaskStatus,
+        /// The task context
+        pub task_cx: TaskContext,
+        /// syscall time count
+        pub sys_call_times: [u32; MAX_SYSCALL_NUM], // 新增
+    }
+    ```
 2. 每次执行系统调用时, 将全局变量`TASK_MANAGER`中当前任务`current_task`对应的`TaskControlBlock`结构体的系统调用记录自增
+   ```rust
+   pub fn syscall(syscall_id: usize, args: [usize; 3]) -> isize {
+        increase_sys_call(syscall_id); // 新增
+        match syscall_id {
+            SYSCALL_WRITE => sys_write(args[0], args[1] as *const u8, args[2]),
+            SYSCALL_EXIT => sys_exit(args[0] as i32),
+            SYSCALL_YIELD => sys_yield(),
+            SYSCALL_GET_TIME => sys_get_time(args[0] as *mut TimeVal, args[1]),
+            SYSCALL_TASK_INFO => sys_task_info(args[0] as *mut TaskInfo),
+            _ => panic!("Unsupported syscall_id: {}", syscall_id),
+        }
+    }  
+    ```
 3. 为`TaskManager`实现`get_sys_call_times`方法, 获取当前任务`current_task`对应的`TaskControlBlock`结构体的系统调用数组的拷贝
+   ```rust
+       fn get_sys_call_times(&self) -> [u32; MAX_SYSCALL_NUM] {
+        let inner: core::cell::RefMut<'_, TaskManagerInner> = self.inner.exclusive_access();
+        inner.tasks[inner.current_task].sys_call_times.clone()
+    }
+    ```
 4. 完成`process.rs`的`sys_task_info`, 调用`get_sys_call_times`和`get_time_ms`获取`TaskInfo`结构体的`syscall_times`和`time`部分, `status`部分设为`Running`
+   ```rust
+   pub fn sys_task_info(_ti: *mut TaskInfo) -> isize {
+        trace!("kernel: sys_task_info");
+        unsafe {
+            *_ti = TaskInfo {
+                status: TaskStatus::Running,
+                syscall_times: get_sys_call_times(),
+                time: get_time_ms(),
+            }
+        }
+        0
+    }
+    ```
 
 # 2 简答作业
 ## 2.1 简答作业第一部分
