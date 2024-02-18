@@ -64,7 +64,7 @@ TEST_F(MyTestFixture, 测试名称) {
 
 
 # 3 案例: `CMake`下使用`gtest`
-这个案例中, 我用自己之前学习过程中用`C++`手写常见数据结构的项目来介绍`CMake`中`gtest`的使用, 仓库在: https://github.com/ToniXWD/cppDataStructure
+这个案例中, 我用自己之前学习过程中用`C++`手写常见数据结构的项目来介绍`CMake`中`gtest`的使用, 仓库在: https://github.com/GFX9/cppDataStructure
 
 ## 3.1 简单测试用例
 ### 3.1.1 官方指导的`CMake`编写

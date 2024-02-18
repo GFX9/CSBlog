@@ -7,7 +7,7 @@ title: ToniBlog
 subtitle: ''
 description: ''
 keywords:
-author: ToniXWD
+author: GFX9
 language: zh-CN
 timezone: ''
 
@@ -103,6 +103,6 @@ theme: cactus
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: git
-  repo: https://gitlab.com/ToniXWD/tonixwd.gitlab.io.git
-  branch: master
-  # branch: gh-pages
+  repo: git@github.com:GFX9/GFX9.github.io.git
+  # branch: master
+  branch: gh-pages

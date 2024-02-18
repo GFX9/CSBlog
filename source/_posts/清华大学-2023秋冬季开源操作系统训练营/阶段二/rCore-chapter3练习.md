@@ -13,7 +13,7 @@ tags:
 
 **练习实验书**: https://learningos.cn/rCore-Tutorial-Guide-2023A/chapter3/5exercise.html
 
-**我的代码**: https://github.com/ToniXWD/2023a-rcore-ToniXWD/tree/ch3
+**我的代码**: https://github.com/GFX9/2023a-rcore-GFX9/tree/ch3
 
 # 1 编程作业
 >> ch3 中，我们的系统已经能够支持多个任务分时轮流运行，我们希望引入一个新的系统调用 sys_task_info 以获取当前任务的信息...

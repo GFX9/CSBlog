@@ -10,13 +10,13 @@ tags:
 - 'Go'
 ---
 
-*最新的更新在博客 [ToniBlog](https://tonixwd.github.io/)*
+*最新的更新在博客 [ToniBlog](https://GFX9.github.io/)*
 
 本文将介绍`lab3B`部分的实现, `lab3B`要求基于在`lab3A`的基础上实现快照, 仅从`lab`本省来讲其实很简单, 可以说是目前我做的所有`lab`里面难度最小的一个模块了, 但实际上遇到了很多困难, 调试的时间比`lab3A`还久, 核心原因就是自己的`lab2`实现的`raft`底层有一些问题(真真真真太折磨了, 即时过了所有单元测试, 还是时不时地在后续的`lab`暴露出问题来, 并且这些问题还挺难定位, 得仔细分析海量的`log`输出才可以)
 
 `Lab`文档见: http://nil.csail.mit.edu/6.5840/2023/labs/lab-kvraft.html
 
-我的代码: https://github.com/ToniXWD/MIT6.5840/tree/lab3B
+我的代码: https://github.com/GFX9/MIT6.5840/tree/lab3B
 
 # 1 快照的生成和传递逻辑
 简单说, `lab3B`就是要在底层`raft`的`log`过大时生成快照并截断日志, 从而节省内存空间, 并且快照会持久化存储到本地。因此， 原来的代码结构只需要在以下几个方面做出调整：

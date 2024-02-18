@@ -1,1 +1,1 @@
-记录CS自学课程笔记和随笔: https://tonixwd.github.io/
+记录CS自学课程笔记和随笔: https://GFX9.github.io/
