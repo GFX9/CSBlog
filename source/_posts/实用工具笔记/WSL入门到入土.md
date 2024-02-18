@@ -78,8 +78,67 @@ wsl --help
 # 显示所有可用的 WSL 命令和用法选项。
 ```
 
-# 4 网络配置
-## 4.1 代理设置
+# 4 配置文件
+配置文件分为2中, 名为`.wslconfig`的全局配置文件和针对每个方向版的配置文件`wsl.conf`
+## 4.1 `.wslconfig`
+`.wslconfig` 用于在 `WSL 2 `上运行的所有已安装发行版中配置全局设置, 其路径在`windows`系统的用户目录下, 下面是我的全局配置`.wslconfig`:
+```bash
+# windows用户目录下
+[experimental]
+autoMemoryReclaim=gradual # 设置为 gradual 以慢速释放，设置为 dropcache 以立即释放缓存的内存
+sparseVhd=true
+networkingMode=mirrored
+dnsTunneling=true
+firewall=true
+autoProxy=true
+```
+
+## 4.2 `wsl.conf`
+`wsl.conf` 文件会针对每个发行版配置设置, 路径在每个发行版的`\etc\`目录下, 例如我的`wsl.conf`如下:
+```bash
+# "\\wsl.localhost\Ubuntu\etc\wsl.conf"
+[boot]
+systemd=true # 允许 systemd 命令
+```
+
+官方也提供了更详细的一个配置文件案例:
+```bash
+# Automatically mount Windows drive when the distribution is launched
+[automount]
+
+# Set to true will automount fixed drives (C:/ or D:/) with DrvFs under the root directory set above. Set to false means drives won't be mounted automatically, but need to be mounted manually or with fstab.
+enabled = true
+
+# Sets the directory where fixed drives will be automatically mounted. This example changes the mount location, so your C-drive would be /c, rather than the default /mnt/c. 
+root = /
+
+# DrvFs-specific options can be specified.  
+options = "metadata,uid=1003,gid=1003,umask=077,fmask=11,case=off"
+
+# Sets the `/etc/fstab` file to be processed when a WSL distribution is launched.
+mountFsTab = true
+
+# Network host settings that enable the DNS server used by WSL 2. This example changes the hostname, sets generateHosts to false, preventing WSL from the default behavior of auto-generating /etc/hosts, and sets generateResolvConf to false, preventing WSL from auto-generating /etc/resolv.conf, so that you can create your own (ie. nameserver 1.1.1.1).
+[network]
+hostname = DemoHost
+generateHosts = false
+generateResolvConf = false
+
+# Set whether WSL supports interop processes like launching Windows apps and adding path variables. Setting these to false will block the launch of Windows processes and block adding $PATH environment variables.
+[interop]
+enabled = false
+appendWindowsPath = false
+
+# Set the user when launching a distribution with WSL.
+[user]
+default = DemoUser
+
+# Set a command to run when a new WSL instance launches. This example starts the Docker container service.
+[boot]
+command = service docker start
+```
+# 5 网络配置
+## 5.1 代理设置
 设置代理只需要导出环境变量即可, 以`Clash`代理的7890端口为例:
 ```bash
 export http_proxy=http://127.0.0.1:7890
@@ -92,7 +151,7 @@ git config --global https.proxy ${PROXY_HTTP}
 ```
 如同Linux物理机一样, 在`.bashrc`中配置环境变量即可永久生效
 
-## 4.2 固定IP
+## 5.2 固定IP
 默认情况下, WSL实例的 IP 地址不是固定的。每次 WSL 实例启动时，它通常会从 Windows 主机的一个虚拟网络适配器获得一个新的 IP 地址。这个虚拟网络适配器充当 DHCP 服务器，为 WSL 实例分配 IP 地址。
 最常用的方案是与宿主机共享IP, 这可以通过配置`wslconfig文件`做到:
 在用户目录下的`.wslconfig文件`中添加如下内容:
@@ -108,7 +167,7 @@ autoProxy=true
 另外还有别的方式固定IP
 1. 使用桥接模式, 参考这篇文章: https://blog.csdn.net/keyiis_sh/article/details/113819244
 2. 配置虚拟网络, 参考这篇文章: http://www.manongjc.com/detail/28-qmgskvmcxbjzfaj.html
-## 4.3 端口映射
+## 5.3 端口映射
 端口映射命令如下:
 建立映射
 ```bash
@@ -126,8 +185,8 @@ netsh interface portproxy show all
 netsh interface portproxy delete v4tov4 listenport=80 listenaddress=0.0.0.0
 ```
 
-# 5 磁盘管理
-## 5.1 安装或迁移wsl到其他磁盘
+# 6 磁盘管理
+## 6.1 安装或迁移wsl到其他磁盘
 wsl默认安装在C盘, ... 
 WSL会在宿主机上创建一个虚拟硬盘文件（通常是一个名为 ext4.vhdx 的文件），用于存储 Linux 发行版的文件系统, 而这个文件貌似是以追加写入的方式运行的, 因此容量会越来越大。**因此将其安装在非系统盘是十分必要的。**
 最简单的方式是手动迁移vhdx文件，注销Linux发行版， 再重新导入。**此操作对于老旧版本的wsl是不适用的！**
@@ -159,7 +218,7 @@ wsl --import <Distribution Name> <InstallLocation> <FileName>
 ```
 通过`--import`可以看出, 这种方法是将<FileName>`安装`到了`<InstallLocation>`, 可以看作多复制了一份, 因此如果我们的wsl无比庞大时, 这样的操作是很费时间的
 
-## 5.2 清理vhdx磁盘空间
+## 6.2 清理vhdx磁盘空间
 如前文所述, WSL 不会自动收缩vhdx文件的大小, 我们需要手动压缩:
 使用管理员打开`powershell`:
 ```powershell
@@ -179,7 +238,16 @@ detach vdisk
 # 退出
 exit
 ```
-# 6 安装CUDA
+
+## 6.3 设置磁盘稀疏以自动回收
+在`.wslconfig`中如下配置:
+```bash
+[experimental]
+autoMemoryReclaim=gradual # 设置为 gradual 以慢速释放，设置为 dropcache 以立即释放缓存的内存
+sparseVhd=true # 新建的vhdx磁盘也是稀疏的
+```
+
+# 7 安装CUDA
 此过程较为繁琐, 且方案迭代过快, 因此给出官方文档: https://docs.nvidia.com/cuda/wsl-user-guide/index.html
 以下的过程仅供参考:
 1. 确保Windows中安装了NVIDIA的显卡驱动(不需要安装cuda)
@@ -201,7 +269,7 @@ exit
     ```
    
 
-# 7 第三方工具LxRunOffline
+# 8 第三方工具LxRunOffline
 `LxRunOffline`是第三方的wsl管理工具,其能更方便我们管理wsl, 例如修改登录用户、安装非微软官方提供的Linux发行版等
 
 Github仓库： https://github.com/DDoSolitary/LxRunOffline

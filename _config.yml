@@ -103,5 +103,6 @@ theme: cactus
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: git
-  repo: https://github.com/ToniXWD/ToniXWD.github.io.git
-  branch: gh-pages
+  repo: https://gitlab.com/ToniXWD/tonixwd.gitlab.io.git
+  branch: master
+  # branch: gh-pages
