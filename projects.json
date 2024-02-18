@@ -1,13 +1,12 @@
 [
     {
         "name": "开源操作系统训练营",
-        "url": "https://github.com/LearningOS",
+        "url": "https://GFX9",
         "desc": "学习项目 | 清华大学组织的开源操作系统训练营"
     },
     {
         "name": "MIT6.5840(原6.824)",
-        "url1": "https://github.com/GFX9/MIT6.5840.git",
-        "url2": "https://github.com/GFX9/MIT6.5840.git",
+        "url": "https://github.com/GFX9/6.5840.git",
         "desc": "学习项目 | 分布式系统课程"
     },
     {
