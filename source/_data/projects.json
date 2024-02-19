@@ -6,8 +6,7 @@
     },
     {
         "name": "MIT6.5840(原6.824)",
-        "url1": "https://github.com/GFX9/MIT6.5840.git",
-        "url2": "https://github.com/GFX9/MIT6.5840.git",
+        "url": "https://github.com/GFX9/MIT6.5840.git",
         "desc": "学习项目 | 分布式系统课程"
     },
     {
@@ -17,7 +16,7 @@
     },
     {
         "name": "MIT6.S081",
-        "url": "https://15445.courses.cs.cmu.edu/fall2022/schedule.html",
+        "url": "https://pdos.csail.mit.edu/6.S081/2020/schedule.html",
         "desc": "学习项目 | 操作系统课程"
     },
     {
